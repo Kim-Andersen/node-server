@@ -20,6 +20,7 @@ var connect = require('gulp-connect');
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps   = require('gulp-sourcemaps');
+var inject = require('gulp-inject');
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
@@ -128,11 +129,9 @@ var browserifyTask = function (options) {
       .pipe(gulp.dest(options.dest))
       .pipe(notify(function () {
         console.log('VENDORS bundle built in ' + (Date.now() - start) + 'ms');
-      }));
-    
+      })); 
   }
-  
-}
+};
 
 var cssTask = function (options) {
   if (options.development) {
@@ -157,11 +156,19 @@ var cssTask = function (options) {
       .pipe(sass({errLogToConsole: true}).on('error', sass.logError))
       .pipe(sourcemaps.init())
       .pipe(autoprefixer(options.autoprefixer))
-      .pipe(sourcemaps.write('.'))
       .pipe(cssmin())
+      .pipe(sourcemaps.write('.'))      
       .pipe(gulp.dest(options.dest));
   }
-}
+};
+
+var htmlTask = function(options){
+  var target = gulp.src(options.src);
+  var sources = gulp.src(options.sources, {read: false});
+
+  return target.pipe(inject(sources, {removeTags: true}))
+    .pipe(gulp.dest(options.dest));
+};
 
 // Starts our development workflow
 gulp.task('default', function () {
@@ -201,6 +208,12 @@ gulp.task('deploy', function () {
     src: path.sassDir+'/**/*.scss',
     dest: path.deployDir,
     autoprefixer: {browsers: ['last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4']}
+  });
+
+  htmlTask({
+    src: path.buildDir + '/index.html',
+    sources: ['./build/main.js', './build/main.css'],
+    dest: path.deployDir
   });
 
 });
