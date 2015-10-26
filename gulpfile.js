@@ -26,6 +26,7 @@ var buffer = require('gulp-buffer');
 var del = require('del');
 var imagemin = require('gulp-imagemin');
 var cache = require('gulp-cache');
+var htmlmin = require('gulp-htmlmin');
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
@@ -189,6 +190,7 @@ gulp.task('indexTask', ['browserifyTask', 'cssTask'], function(){
 
   return target
     .pipe(inject(sources, {removeTags: true, cwd: __dirname + '/dist', ignorePath: '/dist', addRootSlash: false}))
+    .pipe(htmlmin({collapseWhitespace: true}))
     .pipe(gulp.dest(path.deployDir));
 });
 
