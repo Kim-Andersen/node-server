@@ -1,14 +1,4 @@
-Start the Node Express web server:
+Start the server locally:
 ```
 npm start
-```
-
-Front-end development:
-```
-gulp
-```
-
-Production-ready build of the front-end:
-```
-gulp deploy
 ```
