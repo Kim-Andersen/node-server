@@ -1,0 +1,14 @@
+{
+  "name": "node-server",
+  "version": "0.0.0",
+  "description": "Simple Node web server.",
+  "main": "./server/main.js",
+  "author": "Kim",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3",
+    "method-override": "^2.3.5",
+    "mongoose": "^4.2.2",
+    "morgan": "^1.6.1"
+  }
+}
