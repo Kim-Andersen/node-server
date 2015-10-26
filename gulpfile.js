@@ -18,6 +18,8 @@ var livereload = require('gulp-livereload');
 var jasminePhantomJs = require('gulp-jasmine2-phantomjs');
 var connect = require('gulp-connect');
 var sass = require('gulp-sass');
+var autoprefixer = require('gulp-autoprefixer');
+var sourcemaps   = require('gulp-sourcemaps');
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
@@ -139,7 +141,10 @@ var cssTask = function (options) {
       var start = new Date();
       console.log('Building CSS bundle');
       gulp.src(options.src)
-        .pipe(sass().on('error', sass.logError))
+        .pipe(sass({errLogToConsole: true}).on('error', sass.logError))
+        .pipe(sourcemaps.init())
+        .pipe(autoprefixer(options.autoprefixer))
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(options.dest))
         .pipe(notify(function () {
           console.log('Sass bundle built in ' + (Date.now() - start) + 'ms');
@@ -149,7 +154,10 @@ var cssTask = function (options) {
     gulp.watch(options.src, run);
   } else {
     gulp.src(options.src)
-      .pipe(sass().on('error', sass.logError))
+      .pipe(sass({errLogToConsole: true}).on('error', sass.logError))
+      .pipe(sourcemaps.init())
+      .pipe(autoprefixer(options.autoprefixer))
+      .pipe(sourcemaps.write('.'))
       .pipe(cssmin())
       .pipe(gulp.dest(options.dest));
   }
@@ -169,7 +177,8 @@ gulp.task('default', function () {
   cssTask({
     development: true,
     src: path.sassDir+'/**/*.scss',
-    dest: path.buildDir
+    dest: path.buildDir,
+    autoprefixer: {browsers: ['last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4']}
   });
 
   connect.server({
@@ -190,7 +199,8 @@ gulp.task('deploy', function () {
   cssTask({
     development: false,
     src: path.sassDir+'/**/*.scss',
-    dest: path.deployDir
+    dest: path.deployDir,
+    autoprefixer: {browsers: ['last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4']}
   });
 
 });
