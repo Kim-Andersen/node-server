@@ -1,2 +1,14 @@
-Start server in development mode, listerning for file changes using nodemon:
-nodemon server.js
+Start the Node Express web server:
+```
+npm start
+```
+
+Front-end development:
+```
+gulp
+```
+
+Build a production/deployment ready version of the front-end:
+```
+gulp deploy
+```
