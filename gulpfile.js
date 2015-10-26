@@ -24,6 +24,7 @@ var inject = require('gulp-inject');
 var rev = require('gulp-rev');
 var buffer = require('gulp-buffer');
 var del = require('del');
+var imagemin = require('gulp-imagemin');
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
@@ -194,6 +195,13 @@ gulp.task('cleanTask', function(cb) {
   return del([path.deployDir], cb)
 });
 
+gulp.task('imagesTask', function() {
+  return gulp.src(path.buildDir+'/images/**/*')
+    .pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
+    .pipe(gulp.dest(+path.deployDir'/images/'))
+    .pipe(notify({ message: 'Images task complete' }));
+});
+
 // Starts our development workflow
 gulp.task('default', function () {
   
@@ -213,7 +221,7 @@ gulp.task('deploy', ['cleanTask'], function () {
 
   development = false;
 
-  gulp.start('browserifyTask', 'cssTask', 'indexTask');
+  gulp.start('browserifyTask', 'cssTask', 'indexTask', 'imagesTask');
 
 });
 
