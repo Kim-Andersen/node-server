@@ -6,9 +6,14 @@ var morgan = require('morgan');             // log requests to the console (expr
 var bodyParser = require('body-parser');    // pull information from HTML POST (express4)
 var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
 
-// configuration =================
+var userController = require('../controllers/user');
+var authController = require('../controllers/auth');
+var passport = require('passport');
 
-mongoose.connect('mongodb://node:nodeuser@mongo.onmodulus.net:27017/uwO3mypu');     // connect to mongoDB database on modulus.io
+// configuration =================
+mongoose.connect('mongodb://localhost:27017/hola');
+
+//mongoose.connect('mongodb://node:nodeuser@mongo.onmodulus.net:27017/uwO3mypu');     // connect to mongoDB database on modulus.io
 
 app.use(express.static(__dirname + '/public'));                 // set the static files location. /public/img will be /img for users
 app.use(morgan('dev'));                                         // log every request to the console
@@ -19,11 +24,24 @@ app.use(methodOverride());
 
 // Error Handling
 app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
+	res.status(err.status || 500);
 });
 
+// Use the passport package in our application
+app.use(passport.initialize());
+
 // routes ======================================================================
-var router = require('./router')(app);
+var router = express.Router();
+//var router = require('./router')(app);
+
+// API.
+app.use('/api', router);
+
+// Create endpoint handlers for /users
+router.route('/users')
+  .post(userController.postUsers)
+  .get(authController.isAuthenticated, userController.getUsers);
+
 
 // listen (start app with node server.js) ======================================
 app.listen(8080);
